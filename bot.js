@@ -1,7 +1,6 @@
 require('dotenv').config();
 const Discord = require('discord.js');
 const fs = require('fs');
-const { join } = require('path');
 const client = new Discord.Client();
 const TOKEN = process.env.TOKEN;
 
@@ -11,7 +10,6 @@ let JSONdata = JSON.parse(fs.readFileSync(JSONpath));
 client.login(TOKEN);
 
 var joinTime = Date.now();
-var currentTime = Date.now();
 
 client.once('ready', () => {
 	console.info(`Logged in as ${client.user.tag}!`);
