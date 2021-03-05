@@ -1,0 +1,26 @@
+{
+  "name": "vibebot",
+  "description": "A Discord Bot",
+  "version": "1.0.0",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "discord.js": "^12.5.1",
+    "dotenv": "^8.2.0",
+    "request": "^2.81.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harry4234/vibebot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/harry4234/vibebot/issues"
+  },
+  "homepage": "https://github.com/harry4234/vibebot#readme"
+}
