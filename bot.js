@@ -1,16 +1,17 @@
 require('dotenv').config();
 const Discord = require('discord.js');
-//const fs = require('fs');
+const fs = require('fs');
+const { join } = require('path');
 const client = new Discord.Client();
 const TOKEN = process.env.TOKEN;
 
-//let JSONpath = 'strikes.JSON';
-//let JSONdata = JSON.parse(fs.readFileSync(JSONpath));
+let JSONpath = 'users.JSON';
+let JSONdata = JSON.parse(fs.readFileSync(JSONpath));
 
 client.login(TOKEN);
 
-var time = new Date().getTime();
-var joinTime = new Date().getTime();
+var joinTime = Date.now();
+var currentTime = Date.now();
 
 client.once('ready', () => {
 	console.info(`Logged in as ${client.user.tag}!`);
@@ -20,15 +21,32 @@ client.once('ready', () => {
 });
 
 client.on('voiceStateUpdate', (oldMember, newMember) => {
-	let newUserChannel = newMember.voiceChannel;
-	let oldUserChannel = oldMember.voiceChannel;
+	let newUserChannel = newMember.channelID;
 
-	if (oldUserChannel === undefined && newUserChannel !== undefined) {
-		joinTime = Date.now();
-	} else if (newUserChannel === undefined) {
-		//init person to json
-		//console.log(newMember.id);
-		time = Date.now() - joinTime;
+	if (newUserChannel !== null) {
+		if (JSONdata[newMember.id].inCall) return;
+		else {
+			console.log('join');
+
+			joinTime = Date.now();
+			JSONdata[newMember.id].inCall = true;
+			fs.writeFileSync(JSONpath, JSON.stringify(JSONdata, null, 2));
+		}
+	} else {
+		console.log('leave');
+
+		JSONdata[newMember.id].inCall = false;
+		fs.writeFileSync(JSONpath, JSON.stringify(JSONdata, null, 2));
+
+		if (!JSONdata[newMember.id]) {
+			JSONdata[message.author.id] = {
+				timeInVC: 0,
+				inCall: false,
+			};
+		}
+
+		JSONdata[newMember.id].timeInVC += Date.now() - joinTime;
+		fs.writeFileSync(JSONpath, JSON.stringify(JSONdata, null, 2));
 	}
 });
 
@@ -43,7 +61,7 @@ function msToTime(duration) {
 
 client.on('message', (message) => {
 	if (message.content == 'time') {
-		message.channel.send(msToTime(time));
+		message.channel.send(msToTime(JSONdata[message.author.id].timeInVC));
 	}
 	{
 		// let messageToLowercase = message.content.replace(/\s/g, '').toLowerCase();
