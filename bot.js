@@ -108,4 +108,3 @@ client.on('message', (message) => {
 		} else message.channel.send('Yo why you bringing bots into this?');
 	}
 });
-//test
