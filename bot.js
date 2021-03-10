@@ -10,8 +10,7 @@ try {
 } catch (err) {
 	fs.writeFile(JSONpath, '{}', (err) => {
 		if (err) throw err;
-
-		console.log('The file was succesfully saved!');
+		JSONdata = JSON.parse(fs.readFileSync(JSONpath));
 	});
 }
 
