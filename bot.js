@@ -9,7 +9,8 @@ try {
 	JSONdata = JSON.parse(fs.readFileSync(JSONpath));
 } catch (err) {
 	fs.writeFile(JSONpath, '{}', (err) => {
-		if (err) JSONdata = JSON.parse(fs.readFileSync(JSONpath));
+		if (err) throw err;
+		JSONdata = JSON.parse(fs.readFileSync(JSONpath));
 	});
 }
 
