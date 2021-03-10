@@ -32,8 +32,8 @@ function joinCall(memberID) {
 	else {
 		console.log('join');
 
+		checkUser(memberID);
 		JSONdata[memberID].inCall = true;
-
 		updateTime(memberID);
 	}
 }
@@ -41,12 +41,12 @@ function joinCall(memberID) {
 function leaveCall(memberID) {
 	console.log('leave');
 
+	checkUser(memberID);
 	JSONdata[memberID].inCall = false;
-
 	updateTime(memberID);
 }
 
-function updateTime(memberID) {
+function checkUser(memberID) {
 	if (!JSONdata[memberID]) {
 		JSONdata[memberID] = {
 			timeInVC: 0,
@@ -54,7 +54,9 @@ function updateTime(memberID) {
 			joinTime: 0,
 		};
 	}
+}
 
+function updateTime(memberID) {
 	if (JSONdata[memberID].joinTime != 0) JSONdata[memberID].timeInVC += Date.now() - JSONdata[memberID].joinTime;
 
 	if (JSONdata[memberID].inCall) JSONdata[memberID].joinTime = Date.now();
@@ -103,6 +105,7 @@ client.on('message', (message) => {
 		var user = getUserFromMention(args) || message.author;
 
 		if (!user.bot) {
+			checkUser(memberID);
 			updateTime(user.id);
 
 			var time = msToTime(JSONdata[user.id].timeInVC);
