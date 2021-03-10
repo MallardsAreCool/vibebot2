@@ -106,7 +106,7 @@ client.on('message', (message) => {
 		var user = getUserFromMention(args) || message.author;
 
 		if (!user.bot) {
-			checkUser(memberID);
+			checkUser(user.id);
 			updateTime(user.id);
 
 			var time = msToTime(JSONdata[user.id].timeInVC);
