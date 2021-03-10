@@ -3,16 +3,22 @@ const Discord = require('discord.js');
 const fs = require('fs');
 const client = new Discord.Client();
 
-let JSONpath = 'users.JSON';
-let JSONdata = JSON.parse(fs.readFileSync(JSONpath));
+let JSONpath = 'users.json';
+let JSONdata;
+try {
+	JSONdata = JSON.parse(fs.readFileSync(JSONpath));
+} catch (err) {
+	fs.writeFile(JSONpath, '{}', (err) => {
+		if (err) throw err;
+
+		console.log('The file was succesfully saved!');
+	});
+}
 
 client.login(process.env.TOKEN);
 
 client.once('ready', () => {
 	console.info(`Logged in as ${client.user.tag}!`);
-	client.user.setActivity(`With People's Emotions`, {
-		type: 1,
-	});
 });
 
 client.on('voiceStateUpdate', (oldMember, newMember) => {
@@ -62,7 +68,7 @@ function msToTime(duration) {
 	var s = Math.floor((duration / 1000) % 60),
 		m = Math.floor((duration / (1000 * 60)) % 60),
 		h = Math.floor((duration / (1000 * 60 * 60)) % 24),
-		d = Math.floor((duration / (1000 * 60 * 60 * 24)) % 7);
+		d = Math.floor(duration / (1000 * 60 * 60 * 24));
 
 	return [d, h, m, s];
 }
@@ -79,6 +85,11 @@ function getUserFromMention(mention) {
 
 		return client.users.cache.get(mention);
 	}
+}
+
+function getS(time) {
+	if (time > 1 || time == 0) return 's';
+	else return '';
 }
 
 client.on('message', (message) => {
@@ -98,11 +109,23 @@ client.on('message', (message) => {
 			var time = msToTime(JSONdata[user.id].timeInVC);
 			var responce = `${user.username} has been in VC for: `;
 
-			if (time[0] != 0) responce += `**${time[0]}** days, `;
-			if (time[1] != 0) responce += `**${time[1]}** hours, `;
-			if (time[2] != 0) responce += `**${time[2]}** minutes and `;
-			responce += `**${time[3]}** seconds! `;
-			if (time[3] == 0) responce += 'How sad :(';
+			if (time[0] != 0) {
+				responce += `**${time[0]}** day${getS(time[0])}`;
+			}
+			if (time[1] != 0) {
+				if (responce.includes('day')) responce += `, `;
+				responce += `**${time[1]}** hour${getS(time[1])}`;
+			}
+			if (time[2] != 0) {
+				if (responce.includes('day')) responce += `, `;
+				if (responce.includes('hour')) responce += `, `;
+				responce += `**${time[2]}** minute${getS(time[2])}`;
+			}
+			if (responce.includes('day') || responce.includes('hour') || responce.includes('minute')) responce += ' and ';
+			responce += `**${time[3]}** second${getS(time[3])}! `;
+
+			if (time[0] == 69 || time[1] == 69 || time[2] == 69 || time[03] == 69) responce += 'Nice.';
+			if (JSONdata[user.id].timeInVC == 0) responce += 'How sad :(';
 
 			message.channel.send(responce);
 		} else message.channel.send('Yo why you bringing bots into this?');
