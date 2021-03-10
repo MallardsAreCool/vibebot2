@@ -28,11 +28,12 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 });
 
 function joinCall(memberID) {
+	checkUser(memberID);
+
 	if (JSONdata[memberID].inCall) return;
 	else {
 		console.log('join');
 
-		checkUser(memberID);
 		JSONdata[memberID].inCall = true;
 		updateTime(memberID);
 	}
